@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Menu, X, Sparkles } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import logoUrl from "@/assets/automind-logo.svg";
 
 const links = [
   { href: "#servizi", label: "Servizi" },
@@ -14,9 +15,7 @@ export function Navbar() {
     <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border">
       <nav className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <a href="#top" className="flex items-center gap-2 font-display text-xl font-bold tracking-tight">
-          <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-primary/15 text-primary">
-            <Sparkles className="h-4 w-4" />
-          </span>
+          <img src={logoUrl} alt="AutoMind" className="h-8 w-8" />
           Auto<span className="text-gradient">Mind</span>
         </a>
         <div className="hidden md:flex items-center gap-8">

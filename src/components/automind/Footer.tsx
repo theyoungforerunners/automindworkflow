@@ -1,4 +1,5 @@
-import { Sparkles, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
+import logoUrl from "@/assets/automind-logo.svg";
 
 const CONTACT_EMAIL = "automind.info.it@gmail.com";
 
@@ -9,9 +10,7 @@ export function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div>
             <div className="flex items-center gap-2 font-display text-lg font-bold mb-2">
-              <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-primary/15 text-primary">
-                <Sparkles className="h-3.5 w-3.5" />
-              </span>
+              <img src={logoUrl} alt="AutoMind" className="h-7 w-7" />
               Auto<span className="text-gradient">Mind</span>
             </div>
             <p className="text-sm text-muted-foreground mb-2">AutoMind — Automazioni AI per PMI italiane.</p>
