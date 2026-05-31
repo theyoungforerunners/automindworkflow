@@ -107,7 +107,7 @@ export function Contact() {
             )}
             <p className="text-center text-xs text-muted-foreground flex items-center justify-center gap-1.5 pt-2">
               <Mail className="h-3 w-3" />
-              Preferisci scrivere direttamente? →{" "}
+              Preferisci scrivere direttamente?{" "}
               <a href={`mailto:${CONTACT_EMAIL}`} className="underline hover:text-foreground transition-colors">
                 {CONTACT_EMAIL}
               </a>
