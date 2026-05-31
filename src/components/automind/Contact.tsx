@@ -115,10 +115,18 @@ export function Contact() {
             </div>
             <button
               type="submit"
-              className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground hover:glow-accent transition-shadow"
+              disabled={submitting}
+              className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground hover:glow-accent transition-shadow disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Invia richiesta <Send className="h-4 w-4" />
+              {submitting ? (
+                <>Invio in corso... <Loader2 className="h-4 w-4 animate-spin" /></>
+              ) : (
+                <>Invia richiesta <Send className="h-4 w-4" /></>
+              )}
             </button>
+            {submitError && (
+              <p className="text-center text-sm text-problem -mt-2">{submitError}</p>
+            )}
             <p className="text-center text-xs text-muted-foreground flex items-center justify-center gap-1.5 pt-2">
               <Mail className="h-3 w-3" />
               Preferisci scrivere direttamente? →{" "}
