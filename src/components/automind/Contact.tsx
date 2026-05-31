@@ -1,6 +1,10 @@
 import { useState, FormEvent } from "react";
-import { Send, CheckCircle2, Mail } from "lucide-react";
+import { Send, CheckCircle2, Mail, Calendar } from "lucide-react";
 import { SECTORS } from "./data";
+
+// ⚠️  Sostituisci con il tuo vero link Calendly dopo averlo creato su calendly.com
+const CALENDLY_URL = "https://calendly.com/automind/15min";
+const CONTACT_EMAIL = "automind.info.it@gmail.com";
 
 export function Contact() {
   const [sent, setSent] = useState(false);
@@ -39,12 +43,29 @@ export function Contact() {
         </div>
 
         {sent ? (
-          <div className="reveal rounded-2xl border border-primary/40 bg-primary/5 p-10 text-center">
-            <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary/20 text-primary mb-4">
+          <div className="reveal rounded-2xl border border-primary/40 bg-primary/5 p-10 text-center space-y-6">
+            <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary/20 text-primary">
               <CheckCircle2 className="h-7 w-7" />
             </div>
-            <h3 className="font-display text-2xl font-bold mb-2">Grazie!</h3>
-            <p className="text-muted-foreground">Ti risponderemo entro 24 ore.</p>
+            <div>
+              <h3 className="font-display text-2xl font-bold mb-2">Richiesta ricevuta!</h3>
+              <p className="text-muted-foreground">
+                Ti risponderemo all'indirizzo che hai indicato entro 24 ore.
+              </p>
+            </div>
+            <div className="border-t border-border pt-6">
+              <p className="text-sm text-muted-foreground mb-4">
+                Preferisci fissare subito una call gratuita di 15 minuti?
+              </p>
+              <a
+                href={CALENDLY_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:glow-accent transition-shadow"
+              >
+                <Calendar className="h-4 w-4" /> Prenota una call gratuita
+              </a>
+            </div>
           </div>
         ) : (
           <form onSubmit={onSubmit} className="reveal rounded-2xl border border-border bg-surface p-8 space-y-5">
@@ -64,11 +85,13 @@ export function Contact() {
             </div>
             <Field label="Email aziendale" name="email" type="email" error={errors.email} />
             <div>
-              <label className="block text-sm font-medium mb-2">Messaggio <span className="text-muted-foreground font-normal">(opzionale)</span></label>
+              <label className="block text-sm font-medium mb-2">
+                Messaggio <span className="text-muted-foreground font-normal">(opzionale)</span>
+              </label>
               <textarea
                 name="messaggio"
                 rows={4}
-                placeholder="Descrivi brevemente il problema che vuole risolvere"
+                placeholder="Descrivi brevemente il problema che vuoi risolvere"
                 className="w-full rounded-lg bg-background border border-border px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors resize-none"
               />
             </div>
@@ -79,7 +102,11 @@ export function Contact() {
               Invia richiesta <Send className="h-4 w-4" />
             </button>
             <p className="text-center text-xs text-muted-foreground flex items-center justify-center gap-1.5 pt-2">
-              <Mail className="h-3 w-3" /> Preferisci scrivere direttamente? → automind@email.com
+              <Mail className="h-3 w-3" />
+              Preferisci scrivere direttamente? →{" "}
+              <a href={`mailto:${CONTACT_EMAIL}`} className="underline hover:text-foreground transition-colors">
+                {CONTACT_EMAIL}
+              </a>
             </p>
           </form>
         )}

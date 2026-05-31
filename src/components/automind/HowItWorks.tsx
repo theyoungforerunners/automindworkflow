@@ -1,9 +1,27 @@
 import { Search, Wrench, Zap } from "lucide-react";
 
 const steps = [
-  { icon: Search, title: "Analizziamo il tuo problema", desc: "Una call gratuita di 15 minuti per capire quali processi ti rubano più tempo." },
-  { icon: Wrench, title: "Costruiamo l'automazione", desc: "Progettiamo e configuriamo il sistema su misura per la tua azienda. Tu non devi fare nulla." },
-  { icon: Zap, title: "Il sistema lavora per te", desc: "Una volta attivo, l'automazione gira in autonomia. Noi monitoriamo e ottimizziamo." },
+  {
+    icon: Search,
+    title: "Analizziamo il tuo problema",
+    desc: "Una call gratuita di 15 minuti per capire quali processi ti rubano più tempo.",
+    // ✏️  Sostituisci questo placeholder con uno screenshot reale dell'analisi quando ce l'hai
+    demoPlaceholder: "Demo: analisi processo",
+  },
+  {
+    icon: Wrench,
+    title: "Costruiamo l'automazione",
+    desc: "Progettiamo e configuriamo il sistema su misura per la tua azienda. Tu non devi fare nulla.",
+    // ✏️  Sostituisci con screenshot del flusso n8n
+    demoPlaceholder: "Demo: flusso n8n",
+  },
+  {
+    icon: Zap,
+    title: "Il sistema lavora per te",
+    desc: "Una volta attivo, l'automazione gira in autonomia. Noi monitoriamo e ottimizziamo.",
+    // ✏️  Sostituisci con screenshot del risultato (es. bozza email generata)
+    demoPlaceholder: "Demo: risultato finale",
+  },
 ];
 
 export function HowItWorks() {
@@ -18,13 +36,22 @@ export function HowItWorks() {
         </div>
         <div className="grid md:grid-cols-3 gap-6 relative">
           {steps.map((s, i) => (
-            <div key={i} className="reveal rounded-2xl border border-border bg-surface p-8 relative">
+            <div key={i} className="reveal rounded-2xl border border-border bg-surface p-8 relative flex flex-col gap-6">
               <div className="absolute -top-4 -right-4 font-display text-7xl font-bold text-primary/10 select-none">0{i + 1}</div>
-              <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary mb-6">
-                <s.icon className="h-6 w-6" />
+              <div>
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary mb-6">
+                  <s.icon className="h-6 w-6" />
+                </div>
+                <h3 className="font-display text-xl font-semibold mb-3">{s.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{s.desc}</p>
               </div>
-              <h3 className="font-display text-xl font-semibold mb-3">{s.title}</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">{s.desc}</p>
+
+              {/* Screenshot placeholder — sostituire con <img src="..." /> quando disponibile */}
+              <div className="rounded-xl border border-dashed border-border bg-background/50 h-28 flex items-center justify-center mt-auto">
+                <p className="text-xs text-muted-foreground/50 text-center px-4">
+                  📸 {s.demoPlaceholder}
+                </p>
+              </div>
             </div>
           ))}
         </div>
