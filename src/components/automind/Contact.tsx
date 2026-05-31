@@ -33,18 +33,7 @@ export function Contact() {
     setSubmitError(null);
     setSubmitting(true);
     try {
-      const payload = { nome, azienda, settore, email, messaggio };
-      const webhookCall = fetch("https://abc123.ngrok-free.app/webhook/conferma-form", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      }).catch((err) => {
-        console.error("Webhook call failed:", err);
-      });
-      await Promise.all([
-        sendEmail({ data: payload }),
-        webhookCall,
-      ]);
+      await sendEmail({ data: { nome, azienda, settore, email, messaggio } });
       toast.success("Messaggio inviato con successo! Ti risponderemo entro 24 ore.", {
         icon: <CheckCircle2 className="h-5 w-5" />,
         duration: 5000,
