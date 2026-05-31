@@ -33,7 +33,14 @@ export function Contact() {
     setSubmitError(null);
     setSubmitting(true);
     try {
-      await sendEmail({ data: { nome, azienda, settore, email, messaggio } });
+      await Promise.all([
+        sendEmail({ data: { nome, azienda, settore, email, messaggio } }),
+        fetch("https://surfacing-tamer-sandpit.ngrok-free.dev", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nome, azienda, email, settore, messaggio }),
+        }).catch((err) => console.error("Webhook error:", err)),
+      ]);
       toast.success("Messaggio inviato con successo! Ti risponderemo entro 24 ore.", {
         icon: <CheckCircle2 className="h-5 w-5" />,
         duration: 5000,
