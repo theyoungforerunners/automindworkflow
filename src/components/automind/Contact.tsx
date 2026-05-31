@@ -1,6 +1,8 @@
 import { useState, FormEvent } from "react";
-import { Send, CheckCircle2, Mail, Calendar } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { Send, CheckCircle2, Mail, Calendar, Loader2 } from "lucide-react";
 import { SECTORS } from "./data";
+import { sendContactEmail } from "@/lib/send-contact.functions";
 
 // ⚠️  Sostituisci con il tuo vero link Calendly dopo averlo creato su calendly.com
 const CALENDLY_URL = "https://calendly.com/automind/15min";
@@ -9,8 +11,11 @@ const CONTACT_EMAIL = "automind.info.it@gmail.com";
 export function Contact() {
   const [sent, setSent] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const sendEmail = useServerFn(sendContactEmail);
 
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const errs: Record<string, string> = {};
@@ -18,12 +23,25 @@ export function Contact() {
     const azienda = String(fd.get("azienda") || "").trim();
     const settore = String(fd.get("settore") || "").trim();
     const email = String(fd.get("email") || "").trim();
+    const messaggio = String(fd.get("messaggio") || "").trim();
     if (!nome) errs.nome = "Campo obbligatorio";
     if (!azienda) errs.azienda = "Campo obbligatorio";
     if (!settore) errs.settore = "Seleziona un settore";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = "Email non valida";
     setErrors(errs);
-    if (Object.keys(errs).length === 0) setSent(true);
+    if (Object.keys(errs).length > 0) return;
+
+    setSubmitError(null);
+    setSubmitting(true);
+    try {
+      await sendEmail({ data: { nome, azienda, settore, email, messaggio } });
+      setSent(true);
+    } catch (err) {
+      console.error(err);
+      setSubmitError("Qualcosa è andato storto. Riprova o scrivici direttamente.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
