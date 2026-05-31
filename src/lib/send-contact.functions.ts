@@ -154,6 +154,80 @@ automind.info.it@gmail.com
       console.error("Webhook n8n call failed:", webhookRes.reason);
     }
 
+    // Raccogli eventuali errori e notificali via email al titolare
+    const errors: string[] = [];
+    const describeReason = (reason: unknown) => {
+      if (reason instanceof Error) return reason.message;
+      try { return JSON.stringify(reason); } catch { return String(reason); }
+    };
+    const describeResendError = (err: unknown) => {
+      if (!err) return "Errore sconosciuto";
+      if (typeof err === "object") {
+        try { return JSON.stringify(err); } catch { /* noop */ }
+      }
+      return String(err);
+    };
+
+    if (!autoReplyOk) {
+      const reason = autoReplyRes.status === "fulfilled"
+        ? describeResendError(autoReplyRes.value.error)
+        : describeReason(autoReplyRes.reason);
+      errors.push(`Auto-reply all'utente (${data.email}) NON inviata: ${reason}`);
+    }
+    if (!webhookOk && webhookRes.status === "rejected") {
+      errors.push(`Webhook n8n NON chiamato: ${describeReason(webhookRes.reason)}`);
+    }
+    if (!internalOk) {
+      const reason = internalRes.status === "fulfilled"
+        ? describeResendError(internalRes.value.error)
+        : describeReason(internalRes.reason);
+      errors.push(`Email interna NON inviata: ${reason}`);
+    }
+
+    if (errors.length > 0) {
+      const errorHtml = `
+        <div style="font-family:Arial,sans-serif;font-size:14px;color:#111;line-height:1.6">
+          <h2 style="margin:0 0 16px;color:#b91c1c">⚠️ Errore nell'invio di una richiesta demo</h2>
+          <p>Si è verificato un errore durante l'elaborazione di una richiesta dal form. I dati dell'utente sono salvi qui sotto:</p>
+          <ul>
+            <li><strong>Nome:</strong> ${escapeHtml(data.nome)}</li>
+            <li><strong>Azienda:</strong> ${escapeHtml(data.azienda)}</li>
+            <li><strong>Settore:</strong> ${escapeHtml(data.settore)}</li>
+            <li><strong>Email:</strong> ${escapeHtml(data.email)}</li>
+            <li><strong>Messaggio:</strong> ${escapeHtml(messaggio)}</li>
+          </ul>
+          <h3 style="margin:20px 0 8px">Errori riscontrati:</h3>
+          <ul style="color:#b91c1c">
+            ${errors.map((e) => `<li>${escapeHtml(e)}</li>`).join("")}
+          </ul>
+        </div>
+      `;
+      const errorText = `Errore nell'invio di una richiesta demo
+
+Dati utente:
+Nome: ${data.nome}
+Azienda: ${data.azienda}
+Settore: ${data.settore}
+Email: ${data.email}
+Messaggio: ${messaggio}
+
+Errori:
+${errors.map((e) => `- ${e}`).join("\n")}
+`;
+
+      try {
+        await resend.emails.send({
+          from: "AutoMind <onboarding@resend.dev>",
+          to: ["automind.info.it@gmail.com"],
+          subject: `⚠️ Errore invio richiesta demo — ${data.azienda}`,
+          html: errorHtml,
+          text: errorText,
+        });
+      } catch (notifyErr) {
+        console.error("Impossibile inviare email di notifica errore:", notifyErr);
+      }
+    }
+
     if (!internalOk && !autoReplyOk) {
       throw new Error("Invio email fallito");
     }
