@@ -83,7 +83,29 @@ Il team AutoMind
 automind.info.it@gmail.com
 `;
 
-    const [internalRes, autoReplyRes] = await Promise.allSettled([
+    const webhookUrl = "https://surfacing-tamer-sandpit.ngrok-free.dev";
+    const webhookPromise = fetch(webhookUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
+      },
+      body: JSON.stringify({
+        nome: data.nome,
+        azienda: data.azienda,
+        email: data.email,
+        settore: data.settore,
+        messaggio: data.messaggio ?? "",
+      }),
+    }).then(async (res) => {
+      if (!res.ok) {
+        const body = await res.text().catch(() => "");
+        throw new Error(`Webhook HTTP ${res.status}: ${body.slice(0, 500)}`);
+      }
+      return res;
+    });
+
+    const [internalRes, autoReplyRes, webhookRes] = await Promise.allSettled([
       resend.emails.send({
         from: "AutoMind <onboarding@resend.dev>",
         to: ["automind.info.it@gmail.com"],
@@ -99,10 +121,12 @@ automind.info.it@gmail.com
         html: autoReplyHtml,
         text: autoReplyText,
       }),
+      webhookPromise,
     ]);
 
     let internalOk = false;
     let autoReplyOk = false;
+    let webhookOk = false;
 
     if (internalRes.status === "fulfilled") {
       if (internalRes.value.error) {
@@ -124,9 +148,15 @@ automind.info.it@gmail.com
       console.error("Resend auto-reply email rejected:", autoReplyRes.reason);
     }
 
+    if (webhookRes.status === "fulfilled") {
+      webhookOk = true;
+    } else {
+      console.error("Webhook n8n call failed:", webhookRes.reason);
+    }
+
     if (!internalOk && !autoReplyOk) {
       throw new Error("Invio email fallito");
     }
 
-    return { ok: true, internalOk, autoReplyOk };
+    return { ok: true, internalOk, autoReplyOk, webhookOk };
   });
