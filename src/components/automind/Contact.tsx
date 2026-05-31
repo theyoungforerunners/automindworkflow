@@ -1,15 +1,13 @@
 import { useState, FormEvent } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Send, CheckCircle2, Mail, Calendar, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { Send, CheckCircle2, Mail, Loader2 } from "lucide-react";
 import { SECTORS } from "./data";
 import { sendContactEmail } from "@/lib/send-contact.functions";
 
-// ⚠️  Sostituisci con il tuo vero link Calendly dopo averlo creato su calendly.com
-const CALENDLY_URL = "https://calendly.com/automind/15min";
 const CONTACT_EMAIL = "automind.info.it@gmail.com";
 
 export function Contact() {
-  const [sent, setSent] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -17,7 +15,8 @@ export function Contact() {
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const fd = new FormData(form);
     const errs: Record<string, string> = {};
     const nome = String(fd.get("nome") || "").trim();
     const azienda = String(fd.get("azienda") || "").trim();
@@ -35,7 +34,12 @@ export function Contact() {
     setSubmitting(true);
     try {
       await sendEmail({ data: { nome, azienda, settore, email, messaggio } });
-      setSent(true);
+      toast.success("Messaggio inviato con successo! Ti risponderemo entro 24 ore.", {
+        icon: <CheckCircle2 className="h-5 w-5" />,
+        duration: 5000,
+      });
+      form.reset();
+      setErrors({});
     } catch (err) {
       console.error(err);
       setSubmitError("Qualcosa è andato storto. Riprova o scrivici direttamente.");
