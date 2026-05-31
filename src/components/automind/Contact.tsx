@@ -113,7 +113,6 @@ export function Contact() {
               </a>
             </p>
           </form>
-        )}
       </div>
     </section>
   );
