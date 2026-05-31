@@ -10,7 +10,7 @@ export function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div>
             <div className="flex items-center gap-2 font-display text-lg font-bold mb-2">
-              <img src={logoUrl} alt="AutoMind" className="h-10 w-10" />
+              <img src={logoUrl} alt="AutoMind" className="h-13 w-13" style={{ height: "3.25rem", width: "3.25rem" }} />
               Auto<span className="text-gradient">Mind</span>
             </div>
             <p className="text-sm text-muted-foreground mb-2">AutoMind — Automazioni AI per PMI italiane.</p>

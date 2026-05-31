@@ -15,7 +15,7 @@ export function Navbar() {
     <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-background/70 border-b border-border">
       <nav className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <a href="#top" className="flex items-center gap-2 font-display text-xl font-bold tracking-tight">
-          <img src={logoUrl} alt="AutoMind" className="h-11 w-11" />
+          <img src={logoUrl} alt="AutoMind" className="h-14 w-14" />
           Auto<span className="text-gradient">Mind</span>
         </a>
         <div className="hidden md:flex items-center gap-8">
