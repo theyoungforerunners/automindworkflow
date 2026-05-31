@@ -1,15 +1,13 @@
 import { useState, FormEvent } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Send, CheckCircle2, Mail, Calendar, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { Send, CheckCircle2, Mail, Loader2 } from "lucide-react";
 import { SECTORS } from "./data";
 import { sendContactEmail } from "@/lib/send-contact.functions";
 
-// ⚠️  Sostituisci con il tuo vero link Calendly dopo averlo creato su calendly.com
-const CALENDLY_URL = "https://calendly.com/automind/15min";
 const CONTACT_EMAIL = "automind.info.it@gmail.com";
 
 export function Contact() {
-  const [sent, setSent] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -17,7 +15,8 @@ export function Contact() {
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const fd = new FormData(form);
     const errs: Record<string, string> = {};
     const nome = String(fd.get("nome") || "").trim();
     const azienda = String(fd.get("azienda") || "").trim();
@@ -35,7 +34,12 @@ export function Contact() {
     setSubmitting(true);
     try {
       await sendEmail({ data: { nome, azienda, settore, email, messaggio } });
-      setSent(true);
+      toast.success("Messaggio inviato con successo! Ti risponderemo entro 24 ore.", {
+        icon: <CheckCircle2 className="h-5 w-5" />,
+        duration: 5000,
+      });
+      form.reset();
+      setErrors({});
     } catch (err) {
       console.error(err);
       setSubmitError("Qualcosa è andato storto. Riprova o scrivici direttamente.");
@@ -60,33 +64,7 @@ export function Contact() {
           </p>
         </div>
 
-        {sent ? (
-          <div className="reveal rounded-2xl border border-primary/40 bg-primary/5 p-10 text-center space-y-6">
-            <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary/20 text-primary">
-              <CheckCircle2 className="h-7 w-7" />
-            </div>
-            <div>
-              <h3 className="font-display text-2xl font-bold mb-2">Richiesta ricevuta!</h3>
-              <p className="text-muted-foreground">
-                Ti risponderemo all'indirizzo che hai indicato entro 24 ore.
-              </p>
-            </div>
-            <div className="border-t border-border pt-6">
-              <p className="text-sm text-muted-foreground mb-4">
-                Preferisci fissare subito una call gratuita di 15 minuti?
-              </p>
-              <a
-                href={CALENDLY_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:glow-accent transition-shadow"
-              >
-                <Calendar className="h-4 w-4" /> Prenota una call gratuita
-              </a>
-            </div>
-          </div>
-        ) : (
-          <form onSubmit={onSubmit} className="reveal rounded-2xl border border-border bg-surface p-8 space-y-5">
+        <form onSubmit={onSubmit} className="reveal rounded-2xl border border-border bg-surface p-8 space-y-5">
             <Field label="Nome e Cognome" name="nome" error={errors.nome} />
             <Field label="Nome Azienda" name="azienda" error={errors.azienda} />
             <div>
@@ -135,7 +113,6 @@ export function Contact() {
               </a>
             </p>
           </form>
-        )}
       </div>
     </section>
   );

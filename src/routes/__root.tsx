@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -122,6 +123,18 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
+      <Toaster
+        position="bottom-right"
+        duration={5000}
+        toastOptions={{
+          classNames: {
+            toast:
+              "group toast !bg-emerald-900 !text-white !border-emerald-700 shadow-lg data-[type=success]:!bg-emerald-900",
+            title: "!text-white",
+            icon: "!text-white",
+          },
+        }}
+      />
     </QueryClientProvider>
   );
 }
