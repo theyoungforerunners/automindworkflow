@@ -1,28 +1,36 @@
-## Obiettivo
-Far arrivare i dati del form di contatto al webhook n8n su `https://surfacing-tamer-sandpit.ngrok-free.dev` in modo affidabile.
+## Problema individuato
 
-## Causa del problema attuale
-La chiamata `fetch` è eseguita dal browser dentro `Contact.tsx`. Il browser applica le regole CORS: prima del POST manda una preflight `OPTIONS` al dominio ngrok, e n8n/ngrok non risponde con `Access-Control-Allow-Origin`, quindi il POST viene bloccato. In più, ngrok-free mostra una pagina di warning ai browser senza un header dedicato. Risultato: la richiesta non arriva mai a n8n, ma l'utente vede "Inviato con successo" perché l'errore è solo loggato in console.
+Nel codice attuale ci sono due percorsi di invio diversi:
 
-## Soluzione
-Spostare la chiamata al webhook **dentro la server function** `sendContactEmail` (`src/lib/send-contact.functions.ts`), che gira sul server. Server → server non ha CORS e non riceve la warning page di ngrok.
+1. `Contact.tsx` chiama ancora un webhook dal browser, ma usa un URL diverso:
+   `https://surfacing-tamer-sandpit.ngrok-free.app/webhook/conferma-form`
 
-## Modifiche
+2. `send-contact.functions.ts` chiama dal server l'URL richiesto:
+   `https://surfacing-tamer-sandpit.ngrok-free.dev`
 
-### `src/lib/send-contact.functions.ts`
-Dopo l'invio delle due email (mantenendole identiche), aggiungere una terza chiamata indipendente:
-- `fetch("https://surfacing-tamer-sandpit.ngrok-free.dev", { method: "POST", headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" }, body: JSON.stringify({ nome, azienda, email, settore, messaggio }) })`
-- Eseguita in `Promise.allSettled` insieme alle email così un fallimento non blocca le altre.
-- Loggare `console.error` con status code + body in caso di risposta non-OK, per rendere debuggabile da `stack_modern--server-function-logs`.
+Questo crea confusione e può impedire l'invio corretto: la chiamata dal browser può essere bloccata da CORS/ngrok, mentre l'unica chiamata affidabile deve essere quella server-side.
 
-### `src/components/automind/Contact.tsx`
-- Rimuovere la `fetch` lato client al webhook (resta solo `sendEmail(...)`).
-- Eliminare il `Promise.all` ora superfluo.
+## Piano di correzione
 
-## Verifica
-1. Compilare il form dal preview.
-2. Controllare i log della server function (`stack_modern--server-function-logs`) per confermare lo status della POST al webhook.
-3. Verificare in n8n che l'esecuzione parta.
+1. Rimuovere completamente la `fetch` lato browser da `src/components/automind/Contact.tsx`.
+2. Far sì che il submit chiami solo la server function `sendContactEmail`.
+3. Mantenere nella server function la POST a:
+   `https://surfacing-tamer-sandpit.ngrok-free.dev`
+4. Inviare nel body JSON esattamente questi campi:
 
-## Nota
-Se per qualsiasi motivo serve assolutamente chiamare il webhook dal browser, l'unica alternativa sarebbe configurare CORS sul nodo Webhook di n8n (header `Access-Control-Allow-Origin: *` + risposta a OPTIONS). Lato server è più robusto e nasconde l'URL ngrok dal bundle client.
+```json
+{
+  "nome": "...",
+  "azienda": "...",
+  "email": "...",
+  "settore": "...",
+  "messaggio": "..."
+}
+```
+
+5. Migliorare la gestione errori: se il webhook ngrok/n8n risponde con errore o non è raggiungibile, il form mostrerà errore invece di successo.
+6. Verificare la chiamata dopo la modifica controllando il comportamento del submit e/o i log server.
+
+## Nota tecnica
+
+La chiamata va fatta dal server perché ngrok/n8n spesso non espone header CORS corretti per richieste browser. Server-to-server evita CORS e permette davvero di consegnare il JSON al webhook.
