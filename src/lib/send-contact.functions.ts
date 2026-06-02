@@ -12,7 +12,7 @@ const ContactSchema = z.object({
 export const sendContactEmail = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => ContactSchema.parse(input))
   .handler(async ({ data }) => {
-    const webhookUrl = "https://surfacing-tamer-sandpit.ngrok-free.dev/webhook-test/conferma-form";
+    const webhookUrl = "https://surfacing-tamer-sandpit.ngrok-free.dev/webhook/conferma-form";
     const res = await fetch(webhookUrl, {
       method: "POST",
       headers: {
