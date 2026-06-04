@@ -21,12 +21,14 @@ export function Contact() {
     const nome = String(fd.get("nome") || "").trim();
     const azienda = String(fd.get("azienda") || "").trim();
     const settore = String(fd.get("settore") || "").trim();
-    const email = String(fd.get("email") || "").trim();
+    const telefono = String(fd.get("telefono") || "").trim();
+    const fonte = String(fd.get("fonte") || "").trim();
     const messaggio = String(fd.get("messaggio") || "").trim();
     if (!nome) errs.nome = "Campo obbligatorio";
     if (!azienda) errs.azienda = "Campo obbligatorio";
     if (!settore) errs.settore = "Seleziona un settore";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = "Email non valida";
+    if (telefono && !/^[0-9+\s-]+$/.test(telefono)) errs.telefono = "Numero non valido";
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
 
