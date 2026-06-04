@@ -21,6 +21,7 @@ export function Contact() {
     const nome = String(fd.get("nome") || "").trim();
     const azienda = String(fd.get("azienda") || "").trim();
     const settore = String(fd.get("settore") || "").trim();
+    const email = String(fd.get("email") || "").trim();
     const telefono = String(fd.get("telefono") || "").trim();
     const fonte = String(fd.get("fonte") || "").trim();
     const messaggio = String(fd.get("messaggio") || "").trim();
