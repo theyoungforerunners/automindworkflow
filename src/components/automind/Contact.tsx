@@ -155,6 +155,7 @@ function Field({ label, name, type = "text", placeholder, error }: { label: Reac
       <input
         type={type}
         name={name}
+        placeholder={placeholder}
         maxLength={255}
         className={`w-full rounded-lg bg-background border ${error ? "border-problem" : "border-border"} px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors`}
       />
