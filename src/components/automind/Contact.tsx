@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Send, CheckCircle2, Mail, Loader2 } from "lucide-react";
@@ -148,7 +148,7 @@ export function Contact() {
   );
 }
 
-function Field({ label, name, type = "text", placeholder, error }: { label: React.ReactNode; name: string; type?: string; placeholder?: string; error?: string }) {
+function Field({ label, name, type = "text", placeholder, error }: { label: ReactNode; name: string; type?: string; placeholder?: string; error?: string }) {
   return (
     <div>
       <label className="block text-sm font-medium mb-2">{label}</label>
