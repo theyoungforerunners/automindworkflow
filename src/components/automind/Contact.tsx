@@ -84,6 +84,32 @@ export function Contact() {
               {errors.settore && <p className="text-xs text-problem mt-1.5">{errors.settore}</p>}
             </div>
             <Field label="Email aziendale" name="email" type="email" error={errors.email} />
+            <Field
+              label={<>Numero di telefono <span className="text-muted-foreground font-normal">(opzionale)</span></>}
+              name="telefono"
+              type="tel"
+              placeholder="Es. +39 333 123 4567"
+              error={errors.telefono}
+            />
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Come ci hai trovato? <span className="text-muted-foreground font-normal">(opzionale)</span>
+              </label>
+              <select
+                name="fonte"
+                defaultValue=""
+                className="w-full rounded-lg bg-background border border-border px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors"
+              >
+                <option value="" disabled>— Seleziona —</option>
+                <option value="Google">Google</option>
+                <option value="Instagram">Instagram</option>
+                <option value="LinkedIn">LinkedIn</option>
+                <option value="Facebook">Facebook</option>
+                <option value="Passaparola">Passaparola</option>
+                <option value="Ai">Ai</option>
+                <option value="Altro">Altro</option>
+              </select>
+            </div>
             <div>
               <label className="block text-sm font-medium mb-2">
                 Messaggio <span className="text-muted-foreground font-normal">(opzionale)</span>
