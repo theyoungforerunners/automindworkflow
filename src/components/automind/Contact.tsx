@@ -36,7 +36,7 @@ export function Contact() {
     setSubmitError(null);
     setSubmitting(true);
     try {
-      await sendEmail({ data: { nome, azienda, settore, email, messaggio } });
+      await sendEmail({ data: { nome, azienda, settore, email, telefono, fonte, messaggio } });
 
       toast.success("Messaggio inviato con successo! Ti risponderemo entro 24 ore.", {
         icon: <CheckCircle2 className="h-5 w-5" />,
