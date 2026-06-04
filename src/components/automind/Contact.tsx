@@ -148,7 +148,7 @@ export function Contact() {
   );
 }
 
-function Field({ label, name, type = "text", error }: { label: string; name: string; type?: string; error?: string }) {
+function Field({ label, name, type = "text", placeholder, error }: { label: React.ReactNode; name: string; type?: string; placeholder?: string; error?: string }) {
   return (
     <div>
       <label className="block text-sm font-medium mb-2">{label}</label>
