@@ -22,18 +22,21 @@ export function Contact() {
     const azienda = String(fd.get("azienda") || "").trim();
     const settore = String(fd.get("settore") || "").trim();
     const email = String(fd.get("email") || "").trim();
+    const telefono = String(fd.get("telefono") || "").trim();
+    const fonte = String(fd.get("fonte") || "").trim();
     const messaggio = String(fd.get("messaggio") || "").trim();
     if (!nome) errs.nome = "Campo obbligatorio";
     if (!azienda) errs.azienda = "Campo obbligatorio";
     if (!settore) errs.settore = "Seleziona un settore";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = "Email non valida";
+    if (telefono && !/^[0-9+\s-]+$/.test(telefono)) errs.telefono = "Numero non valido";
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
 
     setSubmitError(null);
     setSubmitting(true);
     try {
-      await sendEmail({ data: { nome, azienda, settore, email, messaggio } });
+      await sendEmail({ data: { nome, azienda, settore, email, telefono, fonte, messaggio } });
 
       toast.success("Messaggio inviato con successo! Ti risponderemo entro 24 ore.", {
         icon: <CheckCircle2 className="h-5 w-5" />,
@@ -81,6 +84,32 @@ export function Contact() {
               {errors.settore && <p className="text-xs text-problem mt-1.5">{errors.settore}</p>}
             </div>
             <Field label="Email aziendale" name="email" type="email" error={errors.email} />
+            <Field
+              label={<>Numero di telefono <span className="text-muted-foreground font-normal">(opzionale)</span></>}
+              name="telefono"
+              type="tel"
+              placeholder="Es. +39 333 123 4567"
+              error={errors.telefono}
+            />
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Come ci hai trovato? <span className="text-muted-foreground font-normal">(opzionale)</span>
+              </label>
+              <select
+                name="fonte"
+                defaultValue=""
+                className="w-full rounded-lg bg-background border border-border px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors"
+              >
+                <option value="" disabled>— Seleziona —</option>
+                <option value="Google">Google</option>
+                <option value="Instagram">Instagram</option>
+                <option value="LinkedIn">LinkedIn</option>
+                <option value="Facebook">Facebook</option>
+                <option value="Passaparola">Passaparola</option>
+                <option value="Ai">Ai</option>
+                <option value="Altro">Altro</option>
+              </select>
+            </div>
             <div>
               <label className="block text-sm font-medium mb-2">
                 Messaggio <span className="text-muted-foreground font-normal">(opzionale)</span>
@@ -119,13 +148,14 @@ export function Contact() {
   );
 }
 
-function Field({ label, name, type = "text", error }: { label: string; name: string; type?: string; error?: string }) {
+function Field({ label, name, type = "text", placeholder, error }: { label: React.ReactNode; name: string; type?: string; placeholder?: string; error?: string }) {
   return (
     <div>
       <label className="block text-sm font-medium mb-2">{label}</label>
       <input
         type={type}
         name={name}
+        placeholder={placeholder}
         maxLength={255}
         className={`w-full rounded-lg bg-background border ${error ? "border-problem" : "border-border"} px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors`}
       />
