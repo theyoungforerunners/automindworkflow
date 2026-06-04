@@ -6,13 +6,15 @@ const ContactSchema = z.object({
   azienda: z.string().trim().min(1).max(160),
   settore: z.string().trim().min(1).max(80),
   email: z.string().trim().email().max(255),
+  telefono: z.string().trim().regex(/^[0-9+\s-]*$/).max(30).optional().default(""),
+  fonte: z.string().trim().max(50).optional().default(""),
   messaggio: z.string().trim().max(2000).optional().default(""),
 });
 
 export const sendContactEmail = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => ContactSchema.parse(input))
   .handler(async ({ data }) => {
-    const webhookUrl = "https://surfacing-tamer-sandpit.ngrok-free.dev/webhook/conferma-form";
+    const webhookUrl = "https://surfacing-tamer-sandpit.ngrok-free.dev/webhook/follow-up-lead";
     const res = await fetch(webhookUrl, {
       method: "POST",
       headers: {
@@ -24,6 +26,8 @@ export const sendContactEmail = createServerFn({ method: "POST" })
         azienda: data.azienda,
         email: data.email,
         settore: data.settore,
+        telefono: data.telefono,
+        fonte: data.fonte,
         messaggio: data.messaggio ?? "",
       }),
     });
