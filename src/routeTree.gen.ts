@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BookingCal9x7kIndexRouteImport } from './routes/booking-cal-9x7k.index'
+import { Route as BookingCal9x7kAdminRouteImport } from './routes/booking-cal-9x7k.admin'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BookingCal9x7kIndexRoute = BookingCal9x7kIndexRouteImport.update({
+  id: '/booking-cal-9x7k/',
+  path: '/booking-cal-9x7k/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookingCal9x7kAdminRoute = BookingCal9x7kAdminRouteImport.update({
+  id: '/booking-cal-9x7k/admin',
+  path: '/booking-cal-9x7k/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/booking-cal-9x7k/admin': typeof BookingCal9x7kAdminRoute
+  '/booking-cal-9x7k/': typeof BookingCal9x7kIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/booking-cal-9x7k/admin': typeof BookingCal9x7kAdminRoute
+  '/booking-cal-9x7k': typeof BookingCal9x7kIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/booking-cal-9x7k/admin': typeof BookingCal9x7kAdminRoute
+  '/booking-cal-9x7k/': typeof BookingCal9x7kIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/booking-cal-9x7k/admin' | '/booking-cal-9x7k/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/booking-cal-9x7k/admin' | '/booking-cal-9x7k'
+  id: '__root__' | '/' | '/booking-cal-9x7k/admin' | '/booking-cal-9x7k/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BookingCal9x7kAdminRoute: typeof BookingCal9x7kAdminRoute
+  BookingCal9x7kIndexRoute: typeof BookingCal9x7kIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/booking-cal-9x7k/': {
+      id: '/booking-cal-9x7k/'
+      path: '/booking-cal-9x7k'
+      fullPath: '/booking-cal-9x7k/'
+      preLoaderRoute: typeof BookingCal9x7kIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/booking-cal-9x7k/admin': {
+      id: '/booking-cal-9x7k/admin'
+      path: '/booking-cal-9x7k/admin'
+      fullPath: '/booking-cal-9x7k/admin'
+      preLoaderRoute: typeof BookingCal9x7kAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BookingCal9x7kAdminRoute: BookingCal9x7kAdminRoute,
+  BookingCal9x7kIndexRoute: BookingCal9x7kIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
