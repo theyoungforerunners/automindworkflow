@@ -18,7 +18,7 @@ export const sendBooking = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => BookingSchema.parse(input))
   .handler(async ({ data }) => {
     const webhookUrl =
-      "https://surfacing-tamer-sandpit.ngrok-free.dev/webhook-test/998be729-6052-4cf2-969a-815fba68ed25";
+      "https://surfacing-tamer-sandpit.ngrok-free.dev/webhook/998be729-6052-4cf2-969a-815fba68ed25";
     const res = await fetch(webhookUrl, {
       method: "POST",
       headers: {
