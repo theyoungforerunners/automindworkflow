@@ -8,6 +8,7 @@ import {
   type BookingConfig,
   type CustomField,
 } from "@/lib/booking-config";
+import { sendBooking } from "@/lib/send-booking.functions";
 
 export const Route = createFileRoute("/booking-cal-9x7k/")({
   head: () => ({
@@ -18,9 +19,6 @@ export const Route = createFileRoute("/booking-cal-9x7k/")({
   }),
   component: GuestPage,
 });
-
-const WEBHOOK_URL =
-  "https://surfacing-tamer-sandpit.ngrok-free.dev/webhook-test/998be729-6052-4cf2-969a-815fba68ed25";
 
 function startOfMonth(d: Date) {
   return new Date(d.getFullYear(), d.getMonth(), 1);
@@ -116,12 +114,7 @@ function GuestPage() {
     };
 
     try {
-      const res = await fetch(WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      await sendBooking({ data: payload });
       setStep(4);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Errore sconosciuto");
